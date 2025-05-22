@@ -208,19 +208,3 @@ export function roundToNChars(num: number, maxChars: number) {
     );
   }
 }
-
-function add(num1: number, num2: number) {
-  const multiplier = Math.pow(
-    32,
-    Math.max(decimalPlaces(num1), decimalPlaces(num2))
-  );
-  return (
-    (Math.round(num1 * multiplier) + Math.round(num2 * multiplier)) / multiplier
-  );
-}
-
-function decimalPlaces(num: number) {
-  const str = num.toString();
-  const index = str.indexOf(".");
-  return index === -1 ? 0 : str.length - index - 1;
-}
