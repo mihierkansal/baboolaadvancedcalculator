@@ -1,4 +1,4 @@
-import { createSignal, onMount } from "solid-js";
+import { createSignal, onMount, Show } from "solid-js";
 import { calculateExpr } from "./exprcalc";
 import "baboolastyles/public/plastic.css";
 //IMPORTANT NOTE: Subtraction is ‑ not -
@@ -121,6 +121,10 @@ function App() {
 
   return (
     <>
+      <div class="logo">
+        <span>BABOOLA (B-100A)</span>
+        <span class="dal">Advanced D.A.L</span>
+      </div>
       <div class="screen">
         <div
           class="screen-inner"
@@ -132,20 +136,27 @@ function App() {
           <div>RAD</div>
         </div>
         <div class="expression">
-          {expr[0]().slice(
-            exprDisplayStart[0](),
-            expressionLnChars[0]() + exprDisplayStart[0]()
-          )}
+          <Show fallback={<>Press AC to fix error</>} when={inp[0]() !== "NaN"}>
+            {expr[0]()
+              .slice(
+                exprDisplayStart[0](),
+                expressionLnChars[0]() + exprDisplayStart[0]()
+              )
+              .split("𝑒")
+              .join("(e)")}
+          </Show>
         </div>
         <div class="input-cnt">
           <div class="input">
-            {inp[0]()
-              .slice(
-                inpDisplayStart[0](),
-                inpLnChars[0]() + inpDisplayStart[0]() + 1
-              )
-              .split("e+")
-              .join("e") || "0"}
+            <Show fallback={<>Error</>} when={inp[0]() !== "NaN"}>
+              {inp[0]()
+                .slice(
+                  inpDisplayStart[0](),
+                  inpLnChars[0]() + inpDisplayStart[0]() + 1
+                )
+                .split("e+")
+                .join("e") || "0"}
+            </Show>
           </div>
         </div>
       </div>
@@ -178,7 +189,7 @@ function App() {
         <button
           onClick={() => {
             inpDisplayStart[1]((v) =>
-              Math.min(++v, inp[0]().length - inpLnChars[0]())
+              Math.min(++v, inp[0]().replace(".", "").length - inpLnChars[0]())
             );
           }}
         >
@@ -187,8 +198,8 @@ function App() {
       </div>
       <div class="buttons">
         <OperatorButton operator="tanh:" displayOperator="tanh" />
-        <OperatorButton operator="sinh:" displayOperator="sinh" />
         <OperatorButton operator="cosh:" displayOperator="cosh" />
+        <OperatorButton operator="sinh:" displayOperator="sinh" />
         <button
           onClick={() => {
             ac();
@@ -205,16 +216,22 @@ function App() {
         </button>
 
         <OperatorButton operator="atan:" displayOperator="atan" />
-        <OperatorButton operator="ln:" displayOperator="logₑ" />
-        <OperatorButton operator="^" displayOperator="xⁿ" />
-        <OperatorButton operator="^2" displayOperator="x²" />
+        <OperatorButton operator="acos:" displayOperator="acos" />
+        <OperatorButton operator="asin:" displayOperator="asin" />
+        <OperatorButton operator="log_10:" displayOperator="log₁₀" />
+        <OperatorButton operator="log_2:" displayOperator="log₂" />
 
-        <AddCharToExprDirectlyAndClearInpButton char="π" />
         <OperatorButton operator="tan:" displayOperator="tan" />
         <OperatorButton operator="cos:" displayOperator="cos" />
         <OperatorButton operator="sin:" displayOperator="sin" />
         <OperatorButton operator="sqrt:" displayOperator="√" />
+        <OperatorButton operator="ln:" displayOperator="logₑ" />
+
+        <AddCharToExprDirectlyAndClearInpButton char="𝑒" />
         <OperatorButton operator="√" displayOperator="ⁿ√" />
+        <OperatorButton operator="^" displayOperator="xⁿ" />
+        <OperatorButton operator="^2" displayOperator="x²" />
+        <AddCharToExprDirectlyAndClearInpButton char="π" />
 
         <NumberButton digit="7" />
         <NumberButton digit="8" />
@@ -273,7 +290,7 @@ function App() {
               return v;
             });
             setExprDispStartToMax();
-            inp[1](calculateExpr(expr[0]()).toString());
+            inp[1](parseFloat(calculateExpr(expr[0]()).toFixed(14)).toString());
             setInpDispStartToMax();
             shouldClearExprAndInpOnNextKey[1](true);
           }}
@@ -344,8 +361,10 @@ function App() {
     }
   }
   function setInpDispStartToMax() {
-    if (inp[0]().length > inpLnChars[0]()) {
-      inpDisplayStart[1](() => inp[0]().length - inpLnChars[0]());
+    if (inp[0]().replace(".", "").length > inpLnChars[0]()) {
+      inpDisplayStart[1](
+        () => inp[0]().replace(".", "").length - inpLnChars[0]()
+      );
     } else {
       inpDisplayStart[1](0);
     }

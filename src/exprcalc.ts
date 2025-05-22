@@ -3,6 +3,7 @@ export const subtraction_operator = "‑";
 export function calculateExpr(expression: string) {
   expression = expression.replace(/\s/g, "");
   expression = expression.replace(/π/g, Math.PI.toString());
+  expression = expression.replace(/𝑒/g, Math.E.toString());
   // Base case: if no parentheses, use calculateSimple
   if (!expression.includes("(")) {
     return calculateSimple(expression);
@@ -29,7 +30,7 @@ export function calculateExpr(expression: string) {
   }
 
   if (startIndex === -1 || endIndex === -1) {
-    throw new Error("Mismatched parentheses");
+    return NaN;
   }
 
   // Extract the expression inside the innermost parentheses
@@ -111,14 +112,20 @@ function evalNumberAndAnySingleDigitOperators(n: string) {
   const splitUp = n.split(":");
 
   let numberPart = parseFloat(splitUp[splitUp.length - 1]);
-  for (let i = splitUp.length - 1; i >= 0; i--) {
-    const oper = splitUp[i];
+  for (let i = splitUp.length - 2; i >= 0; i--) {
+    const [oper, base] = splitUp[i].split("_");
     switch (oper) {
       case "sqrt":
         numberPart = Math.sqrt(numberPart);
         break;
       case "atan":
         numberPart = Math.atan(numberPart);
+        break;
+      case "acos":
+        numberPart = Math.acos(numberPart);
+        break;
+      case "asin":
+        numberPart = Math.asin(numberPart);
         break;
       case "tanh":
         numberPart = Math.tanh(numberPart);
@@ -131,6 +138,9 @@ function evalNumberAndAnySingleDigitOperators(n: string) {
         break;
       case "ln":
         numberPart = Math.log(numberPart);
+        break;
+      case "log":
+        numberPart = logBase(numberPart, parseFloat(base));
         break;
       case "cos":
         numberPart = Math.cos(numberPart);
@@ -183,28 +193,8 @@ function operate2Operands(operator: string | undefined, a: number, b: number) {
   return _a;
 }
 
-export function roundToNChars(num: number, maxChars: number) {
-  const numStr = num.toString();
+const logBase = (x: number, base: number) => Math.log(x) / Math.log(base);
 
-  // If already shorter than maxChars, return original number
-  if (numStr.length <= maxChars) return num;
+console.log(calculateExpr("2.5^(log_2.5:5)"));
 
-  // Handle negative numbers
-  const isNegative = num < 0;
-  const effectiveMaxChars = isNegative ? maxChars - 1 : maxChars;
-
-  // Calculate precision needed
-  const [intPart] = Math.abs(num).toString().split(".");
-
-  if (intPart.length >= effectiveMaxChars) {
-    // Round to nearest integer that fits
-    const scale = Math.pow(10, intPart.length - effectiveMaxChars + 1);
-    return Math.round(num / scale) * scale;
-  } else {
-    // Round decimals to fit maxChars
-    const decimalsAllowed = effectiveMaxChars - intPart.length - 1; // -1 for decimal point
-    return (
-      Number(Math.abs(num).toFixed(decimalsAllowed)) * (isNegative ? -1 : 1)
-    );
-  }
-}
+console.log(calculateExpr("3.169925001442313^2"));

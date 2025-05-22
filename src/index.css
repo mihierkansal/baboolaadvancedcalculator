@@ -9,7 +9,7 @@
   src: url("/7segment.woff");
 }
 body {
-  height: 100vh;
+  height: 100dvh;
   display: grid;
   place-items: center;
   padding: 2rem;
@@ -28,7 +28,7 @@ body {
   border-radius: 1.5rem;
   max-width: 100vw;
   width: 25rem;
-  gap: 3.5rem;
+  gap: 1.5rem;
   @media screen and (max-width: 40rem) {
     width: 100%;
     border-radius: 0rem;
@@ -44,6 +44,18 @@ body {
       display: grid;
       place-items: center;
     }
+  }
+  & .logo {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    width: calc(100% - 4rem);
+    top: 0.45rem;
+    font-size: 0.5rem;
+    color: grey;
+    font-weight: bold;
+    font-style: oblique;
+    font-family: "Lucida Sans", "Georgia", "Times";
   }
 }
 
