@@ -32,6 +32,10 @@ function App() {
 
   const shouldClearExprAndInpOnNextKey = createSignal(false);
 
+  const hyp = createSignal(false);
+
+  const m = createSignal(0);
+
   function NumberButton(props: { digit: string }) {
     return (
       <button
@@ -87,6 +91,8 @@ function App() {
     exprDisplayStart[1](0);
     inp[1]("");
     inpDisplayStart[1](0);
+    hyp[1](false);
+    m[1](0);
   }
 
   function del() {
@@ -98,7 +104,10 @@ function App() {
     setInpDispStartToMax();
   }
 
-  function AddCharToExprDirectlyAndClearInpButton(props: { char: string }) {
+  function AddCharToExprDirectlyAndClearInpButton(props: {
+    char: string;
+    addlClickHandler?: () => void;
+  }) {
     return (
       <button
         onClick={() => {
@@ -112,6 +121,7 @@ function App() {
           });
           inpDisplayStart[1](0);
           setExprDispStartToMax();
+          props.addlClickHandler?.();
         }}
       >
         <span>{props.char}</span>
@@ -134,6 +144,20 @@ function App() {
         ></div>
         <div class="indicators">
           <div>RAD</div>
+          <div
+            classList={{
+              inactive: !hyp[0](),
+            }}
+          >
+            HYP
+          </div>
+          <div
+            classList={{
+              inactive: !m[0](),
+            }}
+          >
+            M
+          </div>
         </div>
         <div class="expression">
           <Show fallback={<>Press AC to fix error</>} when={inp[0]() !== "NaN"}>
@@ -197,9 +221,31 @@ function App() {
         </button>
       </div>
       <div class="buttons">
-        <OperatorButton operator="tanh:" displayOperator="tanh" />
-        <OperatorButton operator="cosh:" displayOperator="cosh" />
-        <OperatorButton operator="sinh:" displayOperator="sinh" />
+        <button
+          onClick={() => {
+            inp[1](m[0]().toString());
+            setInpDispStartToMax();
+          }}
+        >
+          <span>MR</span>
+        </button>
+        <button
+          onClick={() => {
+            equal();
+            m[1]((v) => v + parseFloat(inp[0]()));
+          }}
+        >
+          <span>M+</span>
+        </button>
+        <button
+          onClick={() => {
+            equal();
+            m[1]((v) => v - parseFloat(inp[0]()));
+          }}
+        >
+          <span>M-</span>
+        </button>
+
         <button
           onClick={() => {
             ac();
@@ -218,8 +264,15 @@ function App() {
         <OperatorButton operator="atan:" displayOperator="atan" />
         <OperatorButton operator="acos:" displayOperator="acos" />
         <OperatorButton operator="asin:" displayOperator="asin" />
+        <button
+          onClick={() => {
+            hyp[1]((v) => !v);
+          }}
+        >
+          <span>hyp</span>
+        </button>
         <OperatorButton operator="log_10:" displayOperator="log₁₀" />
-        <OperatorButton operator="log_2:" displayOperator="log₂" />
+        {/* <OperatorButton operator="log_2:" displayOperator="log₂" /> */}
 
         <OperatorButton operator="tan:" displayOperator="tan" />
         <OperatorButton operator="cos:" displayOperator="cos" />
@@ -283,16 +336,7 @@ function App() {
         </button>
         <button
           onClick={() => {
-            const _inp = inp[0]();
-            clearExprAndInpIfShould();
-            expr[1]((v) => {
-              v += _inp;
-              return v;
-            });
-            setExprDispStartToMax();
-            inp[1](parseFloat(calculateExpr(expr[0]()).toFixed(14)).toString());
-            setInpDispStartToMax();
-            shouldClearExprAndInpOnNextKey[1](true);
+            equal();
           }}
           class="eq"
         >
@@ -301,6 +345,27 @@ function App() {
       </div>
     </>
   );
+
+  function equal() {
+    const _inp = inp[0]();
+    clearExprAndInpIfShould();
+    expr[1]((v) => {
+      v += _inp;
+      return v;
+    });
+    setExprDispStartToMax();
+    inp[1](calculate());
+    setInpDispStartToMax();
+    shouldClearExprAndInpOnNextKey[1](true);
+  }
+
+  function calculate() {
+    return parseFloat(
+      calculateExpr(expr[0](), {
+        hyp: hyp[0](),
+      }).toFixed(14)
+    ).toString();
+  }
 
   function updateExpressionLnWidth() {
     const displayWidth = document.querySelector(".screen-inner")!.clientWidth;
