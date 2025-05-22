@@ -189,6 +189,10 @@ function evalNumberAndAnySingleDigitOperators(
           numberPart = Math.tan(numberPart);
         }
         break;
+
+      case "factorial":
+        numberPart = factorial(numberPart);
+        break;
     }
   }
   return numberPart;
@@ -251,6 +255,17 @@ function operate2Operands(operator: string | undefined, a: number, b: number) {
 }
 
 const logBase = (x: number, base: number) => Math.log(x) / Math.log(base);
+
+function factorial(n: number) {
+  if (n < 0) {
+    return NaN;
+  }
+  let result = 1;
+  for (let i = 2; i <= n; i++) {
+    result *= i;
+  }
+  return result;
+}
 
 function getEvaluableExpression(expression: string): string {
   // Remove spaces for consistent parsing

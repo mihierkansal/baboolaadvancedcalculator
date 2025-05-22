@@ -264,6 +264,18 @@ function App() {
         <OperatorButton operator="atan:" displayOperator="atan" />
         <OperatorButton operator="acos:" displayOperator="acos" />
         <OperatorButton operator="asin:" displayOperator="asin" />
+        {/* <button
+          onClick={() => {
+           }}
+        >
+          <span>↔deg</span>
+        </button> */}
+        <OperatorButton operator="log_10:" displayOperator="log₁₀" />
+        <OperatorButton operator="log_2:" displayOperator="log₂" />
+
+        <OperatorButton operator="tan:" displayOperator="tan" />
+        <OperatorButton operator="cos:" displayOperator="cos" />
+        <OperatorButton operator="sin:" displayOperator="sin" />
         <button
           onClick={() => {
             hyp[1]((v) => !v);
@@ -271,20 +283,26 @@ function App() {
         >
           <span>hyp</span>
         </button>
-        <OperatorButton operator="log_10:" displayOperator="log₁₀" />
-        {/* <OperatorButton operator="log_2:" displayOperator="log₂" /> */}
-
-        <OperatorButton operator="tan:" displayOperator="tan" />
-        <OperatorButton operator="cos:" displayOperator="cos" />
-        <OperatorButton operator="sin:" displayOperator="sin" />
-        <OperatorButton operator="sqrt:" displayOperator="√" />
         <OperatorButton operator="ln:" displayOperator="logₑ" />
 
         <AddCharToExprDirectlyAndClearInpButton char="𝑒" />
         <OperatorButton operator="√" displayOperator="ⁿ√" />
         <OperatorButton operator="^" displayOperator="xⁿ" />
         <OperatorButton operator="^2" displayOperator="x²" />
+        <button
+          onClick={() => {
+            inp[1](parseFloat(Math.random().toFixed(14)).toString());
+          }}
+        >
+          <span>rand</span>
+        </button>
+
         <AddCharToExprDirectlyAndClearInpButton char="π" />
+        <OperatorButton operator="^3" displayOperator="x³" />
+        <OperatorButton operator="curoot:" displayOperator="³√" />
+
+        <OperatorButton operator="sqrt:" displayOperator="√" />
+        <OperatorButton displayOperator="n!" operator="factorial:" />
 
         <NumberButton digit="7" />
         <NumberButton digit="8" />
