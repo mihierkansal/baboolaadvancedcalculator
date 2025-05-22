@@ -33,6 +33,9 @@ body {
     width: 100%;
     border-radius: 0rem;
   }
+  @media screen and (min-width: 40rem) {
+    max-height: 45rem;
+  }
   & .buttons {
     display: grid;
     gap: 1rem;
