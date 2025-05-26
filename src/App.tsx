@@ -64,12 +64,16 @@ function App() {
   function OperatorButton(props: {
     displayOperator: string;
     operator: string;
+    canStartExpressionFromScratch?: boolean;
   }) {
     return (
       <button
         onClick={() => {
-          const _inp = inp[0]();
+          let _inp = inp[0]();
           clearExprAndInpIfShould();
+          if (props.canStartExpressionFromScratch) {
+            _inp = "";
+          }
           expr[1]((v) => {
             v += _inp;
             v += props.operator;
@@ -111,14 +115,16 @@ function App() {
     return (
       <button
         onClick={() => {
-          const _inp = inp[0]();
           clearExprAndInpIfShould();
+          const _inp = inp[0]();
+          // expr[1]("");
           expr[1]((v) => {
             v += _inp;
             v += props.char;
             inp[1]("");
             return v;
           });
+          console.log(expr[0]());
           inpDisplayStart[1](0);
           setExprDispStartToMax();
           props.addlClickHandler?.();
@@ -261,21 +267,27 @@ function App() {
           <span>DEL</span>
         </button>
 
-        <OperatorButton operator="atan:" displayOperator="atan" />
-        <OperatorButton operator="acos:" displayOperator="acos" />
-        <OperatorButton operator="asin:" displayOperator="asin" />
+        <OperatorButton
+          canStartExpressionFromScratch
+          operator={hyp[0]() ? "atanh:" : "atan:"}
+          displayOperator="atan"
+        />
+        <OperatorButton
+          canStartExpressionFromScratch
+          operator={hyp[0]() ? "acosh:" : "acos:"}
+          displayOperator="acos"
+        />
+        <OperatorButton
+          canStartExpressionFromScratch
+          operator={hyp[0]() ? "asinh:" : "asin:"}
+          displayOperator="asin"
+        />
         {/* <button
           onClick={() => {
            }}
         >
           <span>↔deg</span>
         </button> */}
-        <OperatorButton operator="log_10:" displayOperator="log₁₀" />
-        <OperatorButton operator="log_2:" displayOperator="log₂" />
-
-        <OperatorButton operator="tan:" displayOperator="tan" />
-        <OperatorButton operator="cos:" displayOperator="cos" />
-        <OperatorButton operator="sin:" displayOperator="sin" />
         <button
           onClick={() => {
             hyp[1]((v) => !v);
@@ -284,6 +296,29 @@ function App() {
           <span>hyp</span>
         </button>
         <OperatorButton operator="ln:" displayOperator="logₑ" />
+
+        <OperatorButton
+          canStartExpressionFromScratch
+          operator={hyp[0]() ? "tanh:" : "tan:"}
+          displayOperator="tan"
+        />
+        <OperatorButton
+          canStartExpressionFromScratch
+          operator={hyp[0]() ? "cosh:" : "cos:"}
+          displayOperator="cos"
+        />
+        <OperatorButton
+          canStartExpressionFromScratch
+          operator={hyp[0]() ? "sinh:" : "sin:"}
+          displayOperator="sin"
+        />
+
+        <OperatorButton
+          canStartExpressionFromScratch
+          operator="log_10:"
+          displayOperator="log₁₀"
+        />
+        <OperatorButton operator="%" displayOperator="%" />
 
         <AddCharToExprDirectlyAndClearInpButton char="𝑒" />
         <OperatorButton operator="√" displayOperator="ⁿ√" />
@@ -298,11 +333,23 @@ function App() {
         </button>
 
         <AddCharToExprDirectlyAndClearInpButton char="π" />
-        <OperatorButton operator="^3" displayOperator="x³" />
-        <OperatorButton operator="curoot:" displayOperator="³√" />
+        <OperatorButton
+          canStartExpressionFromScratch
+          operator="^3"
+          displayOperator="x³"
+        />
+        <OperatorButton
+          canStartExpressionFromScratch
+          operator="curoot:"
+          displayOperator="³√"
+        />
 
-        <OperatorButton operator="sqrt:" displayOperator="√" />
-        <OperatorButton displayOperator="n!" operator="factorial:" />
+        <OperatorButton
+          canStartExpressionFromScratch
+          operator="sqrt:"
+          displayOperator="√"
+        />
+        <OperatorButton displayOperator="n!" operator="!" />
 
         <NumberButton digit="7" />
         <NumberButton digit="8" />
@@ -380,7 +427,7 @@ function App() {
   function calculate() {
     return parseFloat(
       calculateExpr(expr[0](), {
-        hyp: hyp[0](),
+        // allHyp: hyp[0](),
       }).toFixed(14)
     ).toString();
   }

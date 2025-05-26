@@ -1,3 +1,4 @@
+/* @import url("https://fonts.cdnfonts.com/css/scientific-calculator-lcd"); */
 :root {
   @media screen and (max-height: 45rem) {
     font-size: 14px;
@@ -7,7 +8,6 @@
     }
   }
 }
-@import url("https://fonts.cdnfonts.com/css/scientific-calculator-lcd");
 
 @font-face {
   font-family: "ScientificCalculator";

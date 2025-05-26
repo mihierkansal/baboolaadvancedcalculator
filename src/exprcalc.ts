@@ -1,7 +1,7 @@
 export const subtraction_operator = "‑";
 
 interface CalculationOptions {
-  hyp?: boolean;
+  allHyp?: boolean;
 }
 
 export function calculateExpr(
@@ -112,11 +112,15 @@ function calculateSimple(expr: string, options?: CalculationOptions) {
 // Syntax:
 /**
  * atan: evalNumberAndAnySingleDigitOperators("atan:5")
- * similar for cos
+ * similar for cos, sin, asin, atanh, acosh, asinh , ...
  * sqrt: evalNumberAndAnySingleDigitOperators("sqrt:5")
- *
+ * factorial: evalNumberAndAnySingleDigitOperators("5!")
+ * log: evalNumberAndAnySingleDigitOperators("log_2:8") // base 2 logarithm of 8
  * multiple: evalNumberAndAnySingleDigitOperators("cos:atan:sqrt:5")
  */
+function isTrailingOperator(c: string) {
+  return c === "!" || c === "%";
+}
 function evalNumberAndAnySingleDigitOperators(
   n: string,
   options?: CalculationOptions
@@ -125,7 +129,17 @@ function evalNumberAndAnySingleDigitOperators(
 
   const splitUp = n.split(":");
 
-  let numberPart = parseFloat(splitUp[splitUp.length - 1]);
+  let lastPart = splitUp[splitUp.length - 1];
+  let numberPart = parseFloat(lastPart);
+
+  const trailingOperators = lastPart
+    .split("")
+    .filter((o) => isTrailingOperator(o));
+
+  if (trailingOperators.includes("!")) {
+    numberPart = factorial(numberPart);
+  }
+
   for (let i = splitUp.length - 2; i >= 0; i--) {
     const [oper, base] = splitUp[i].split("_");
     switch (oper) {
@@ -133,26 +147,27 @@ function evalNumberAndAnySingleDigitOperators(
         numberPart = Math.sqrt(numberPart);
         break;
       case "atan":
-        if (options?.hyp) {
+        if (options?.allHyp) {
           atanh();
         } else {
           numberPart = Math.atan(numberPart);
         }
         break;
       case "acos":
-        if (options?.hyp) {
+        if (options?.allHyp) {
           acosh();
         } else {
           numberPart = Math.acos(numberPart);
         }
         break;
       case "asin":
-        if (options?.hyp) {
+        if (options?.allHyp) {
           asinh();
         } else {
           numberPart = Math.asin(numberPart);
         }
         break;
+
       case "tanh":
         tanh();
         break;
@@ -162,6 +177,16 @@ function evalNumberAndAnySingleDigitOperators(
       case "sinh":
         sinh();
         break;
+
+      case "atanh":
+        atanh();
+        break;
+      case "acosh":
+        acosh();
+        break;
+      case "asinh":
+        asinh();
+        break;
       case "ln":
         numberPart = Math.log(numberPart);
         break;
@@ -169,21 +194,21 @@ function evalNumberAndAnySingleDigitOperators(
         numberPart = logBase(numberPart, parseFloat(base));
         break;
       case "cos":
-        if (options?.hyp) {
+        if (options?.allHyp) {
           cosh();
         } else {
           numberPart = Math.cos(numberPart);
         }
         break;
       case "sin":
-        if (options?.hyp) {
+        if (options?.allHyp) {
           sinh();
         } else {
           numberPart = Math.sin(numberPart);
         }
         break;
       case "tan":
-        if (options?.hyp) {
+        if (options?.allHyp) {
           tanh();
         } else {
           numberPart = Math.tan(numberPart);
@@ -194,6 +219,10 @@ function evalNumberAndAnySingleDigitOperators(
         numberPart = factorial(numberPart);
         break;
     }
+  }
+
+  if (trailingOperators.includes("%")) {
+    numberPart = numberPart / 100;
   }
   return numberPart;
 
@@ -317,10 +346,5 @@ function getEvaluableExpression(expression: string): string {
 }
 
 console.log(getEvaluableExpression("5+2"));
-console.log(getEvaluableExpression("5+(3^4+9)"));
 
-console.log(evalNumberAndAnySingleDigitOperators("2.5^(log_2.5:5)"));
-
-console.log(calculateExpr("2.5^(log_2.5:5)"));
-
-console.log(calculateExpr("3.169925001442313^2"));
+console.log(calculateExpr("5!"));
