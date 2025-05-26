@@ -76,6 +76,7 @@ body {
   max-height: 7rem;
   width: 100%;
   background: #f0eaff;
+  color: #105;
   border-radius: 0.5rem;
   user-select: text;
   box-shadow: 0 -9px 7px #0002, 0 9px 7px #fff, inset 0 4px 6px #0003;
